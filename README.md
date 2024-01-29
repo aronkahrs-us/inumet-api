@@ -5,7 +5,7 @@ INUMET Api wrapper for python
 ## Installation
 
 ```console
-$ pip install inumet
+$ pip install inumet_api
 ```
 
 ## Example
