@@ -12,7 +12,7 @@ $ pip install inumet
 
 ```py
 # import the module
-from inumet import INUMET
+from inumet_api import INUMET
 
 print(INUMET().estado_actual())
 ```
