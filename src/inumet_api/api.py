@@ -15,9 +15,9 @@ class INUMET:
         self._endpoints()
         self.depto = depto
         if station != "":
-            self.station = [x['id'] for x in self.estaciones()['estaciones'] if x['NombreEstacion'] == station][0]
+            self.station = [x['id'] for x in self.estaciones() if x['NombreEstacion'] == station][0]
         if depto != "":
-            self.zone = [x['idInt'] for x in self.zonas()["zonas"] if depto.lower().replace(" ","") in x['deptos']][0]
+            self.zone = [x['idInt'] for x in self.zonas() if depto.lower().replace(" ","") in x['deptos']][0]
         pass
 
     def estaciones(self) -> list:
