@@ -1,5 +1,6 @@
 import requests
 import datetime as dt
+from unidecode import unidecode
 
 BASE_URL = "https://www.inumet.gub.uy"
 
@@ -17,7 +18,7 @@ class INUMET:
         if station != "":
             self.station = [x['id'] for x in self.estaciones() if x['NombreEstacion'] == station][0]
         if depto != "":
-            self.zone = [x['idInt'] for x in self.zonas() if depto.lower().replace(" ","") in x['deptos']][0]
+            self.zone = [x['idInt'] for x in self.zonas() if unidecode(depto.lower().replace(" ","")) in x['deptos']][0]
         pass
 
     def estaciones(self) -> list:
