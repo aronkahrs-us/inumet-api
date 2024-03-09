@@ -19,7 +19,6 @@ class INUMET:
             self.station = [x['id'] for x in self.estaciones() if x['NombreEstacion'] == station][0]
         if depto != "":
             self.zone = [x['idInt'] for x in self.zonas() if unidecode(depto.lower().replace(" ","")) in x['deptos']][0]
-        pass
 
     def estaciones(self) -> list:
         """
@@ -66,7 +65,7 @@ class INUMET:
         """
         forecast=[]
         data = self._request(self.endpoints['pronosticoV2'].replace('.mch','.json'))
-        if self.zone != "" and self.zone in [x['idInt'] for x in self.zonas()['zonas']]:
+        if self.zone != "" and self.zone in [x['idInt'] for x in self.zonas()]:
             fechaInicio = data['inicioPronostico']
             #data=[x for x in data['items'] if x['zonaId'] == self.zone]
             for x in data['items']:
@@ -121,11 +120,11 @@ class INUMET:
         """
         Test if all parmeters are correct and if station is working.
         """
-        if self.station not in [x['id'] for x in self.estaciones()['estaciones']]:
+        if self.station not in [x['id'] for x in self.estaciones()]:
             return False
-        if self.depto not in [x['nombre'] for x in self.departamentos()['deptos']]:
+        if self.depto not in [x['nombre'] for x in self.departamentos()]:
             return False
-        if self.zone not in [x['idInt'] for x in self.zonas()['zonas']]:
+        if self.zone not in [x['idInt'] for x in self.zonas()]:
             return False
         if self.estado_actual() == False:
             return False
