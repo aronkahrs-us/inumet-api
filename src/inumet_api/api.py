@@ -1,24 +1,39 @@
 import requests
 import datetime as dt
 from unidecode import unidecode
+from scipy import spatial
 
 BASE_URL = "https://www.inumet.gub.uy"
 
 class INUMET:
-    def __init__(self, station:str="", depto:str="") -> None:
+    def __init__(self, lat:float=0, long:float=0, station:str="", depto:str="") -> None:
         """
         Initialize the class.
         
-        Parameters:
+        Parameters
+        ----------
+            lat (float): Latitud, used to get nearest station and current zone.
+            long (float): Longitude, used to get nearest station and current zone.
             station (str): Name of the weather station(from the self.estaciones() list).
             depto (str): Name of the state.
+
+        Note
+        ----------
+            Either use lat and long or station and department, using both can cause errors and makes no sense.
         """
         self._endpoints()
-        self.depto = depto
-        if station != "":
-            self.station = [x['id'] for x in self.estaciones() if x['NombreEstacion'] == station][0]
-        if depto != "":
-            self.zone = [x['idInt'] for x in self.zonas() if unidecode(depto.lower().replace(" ","")) in x['deptos']][0]
+        if station == "" and depto == "":
+            stationsCoords = spatial.KDTree([(x.get('Latitud'),x.get('Longitud')) for x in self.estaciones()])
+            station = stationsCoords.query([(lat,long)])
+            self.station = self.estaciones()[int(station[1])].get('id')
+            zonesCoords = spatial.KDTree([(x.get('latitud'),x.get('longitud')) for x in self.zonas()])
+            zone = zonesCoords.query([(lat,long)])
+            self.zone = self.zonas()[int(zone[1])].get('idInt')
+        else:
+            if station != "":
+                self.station = [x['id'] for x in self.estaciones() if x['NombreEstacion'] == station][0]
+            if depto != "":
+                self.zone = [x['idInt'] for x in self.zonas() if unidecode(depto.lower().replace(" ","")) in x['deptos']][0]
 
     def estaciones(self) -> list:
         """
@@ -48,7 +63,7 @@ class INUMET:
         try:
             if self.station != "":
                 if self.station in [x['id'] for x in data['estaciones']]:
-                    return [x for x in data['estaciones'] if x['id'] == self.station ][0]
+                    return [x for x in data['estaciones'] if x['id'] == self.station][0]
                 else:
                     return self.get_estado()
             else:
@@ -121,8 +136,6 @@ class INUMET:
         Test if all parmeters are correct and if station is working.
         """
         if self.station not in [x['id'] for x in self.estaciones()]:
-            return False
-        if self.depto not in [x['nombre'] for x in self.departamentos()]:
             return False
         if self.zone not in [x['idInt'] for x in self.zonas()]:
             return False
