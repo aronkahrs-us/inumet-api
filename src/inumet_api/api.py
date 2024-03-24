@@ -23,9 +23,17 @@ class INUMET:
         """
         self._endpoints()
         if station == "" and depto == "":
-            stationsCoords = spatial.KDTree([(x.get('Latitud'),x.get('Longitud')) for x in self.estaciones()])
+            sts = self._request(self.endpoints['estadoactual'])['estaciones']
+            all_sts = [(x.get('Latitud'),x.get('Longitud')) for x in self.estaciones()]
+            full_sts = [(x.get('Latitud'),x.get('Longitud')) if x.get('id') in [x.get('id') for x in sts] else (0,0) for x in self.estaciones()]
+            stationsCoords = spatial.KDTree(full_sts)
             station = stationsCoords.query([(lat,long)])
-            self.station = self.estaciones()[int(station[1])].get('id')
+            if int(station[0]) < 60:
+                self.station = self.estaciones()[int(station[1])].get('id')
+            else:
+                stationsCoords = spatial.KDTree(all_sts)
+                station = stationsCoords.query([(lat,long)])
+                self.station = self.estaciones()[int(station[1])].get('id')
             zonesCoords = spatial.KDTree([(x.get('latitud'),x.get('longitud')) for x in self.zonas()])
             zone = zonesCoords.query([(lat,long)])
             self.zone = self.zonas()[int(zone[1])].get('idInt')
