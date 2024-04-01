@@ -34,6 +34,7 @@ class INUMET:
                 stationsCoords = spatial.KDTree(all_sts)
                 station = stationsCoords.query([(lat,long)])
                 self.station = self.estaciones()[int(station[1])].get('id')
+            self.stationName = self.estaciones()[int(station[1])].get('NombreEstacion')
             zonesCoords = spatial.KDTree([(x.get('latitud'),x.get('longitud')) for x in self.zonas()])
             zone = zonesCoords.query([(lat,long)])
             self.zone = self.zonas()[int(zone[1])].get('idInt')
