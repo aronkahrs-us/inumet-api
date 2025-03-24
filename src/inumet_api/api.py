@@ -8,7 +8,7 @@ BASE_URL = "https://www.inumet.gub.uy"
 class INUMET:
     def __init__(self, lat:float=0, long:float=0, station:str="", depto:str="") -> None:
         """
-        Initialize the class.
+        Initialize the class.linked
         
         Parameters
         ----------
@@ -95,7 +95,10 @@ class INUMET:
             for x in data['items']:
                  if x['zonaId'] == self.zone:
                     x['fecha'] = (dt.datetime.strptime(fechaInicio,'%Y-%m-%d') + dt.timedelta(days=x['diaMasN'])).isoformat()
-                    estado = int(x['estadoTiempo'])
+                    try:
+                        estado = int(x['estadoTiempo'])
+                    except:
+                        estado = 0
                     if estado == 4 or estado == 13 or estado == 24:
                         condition = 'cloudy'
                     elif estado == 12 or estado == 19:
@@ -118,6 +121,8 @@ class INUMET:
                         condition = 'snowy'
                     elif estado == 18:
                         condition = 'exceptional'
+                    elif estado == 0:
+                        condition = None
                     x['condition']=condition
                     forecast.append(x)
             return forecast

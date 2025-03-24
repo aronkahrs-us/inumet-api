@@ -14,14 +14,14 @@ $ pip install inumet_api
 # import the module
 from inumet_api import INUMET
 
-print(INUMET('Prado','Montevideo')._get_data())
+print(INUMET(lat=-34.90657685747718, long=-56.199728569298955)._get_data())
 ```
 ### Get Current Conditions
 ```py
 # import the module
 from inumet_api import INUMET
 
-print(INUMET('Prado','Montevideo').estado_actual())
+print(INUMET(lat=-34.90657685747718, long=-56.199728569298955).estado_actual())
 ```
 
 ### Get the list of stations
